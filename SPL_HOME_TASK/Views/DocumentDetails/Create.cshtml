@@ -1,0 +1,168 @@
+﻿@model SPL_HOME_TASK.Models.DocumentInformation
+@{
+    ViewBag.Title = "Create";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<style>    
+    textarea.form-control {
+        height: 38px;
+        width: 350px;
+    }
+
+    a {
+        color: #759cd5;
+        text-decoration: none;
+        text-decoration-line: none;
+    }
+
+    element.style {
+        margin-top: 35px;
+    }
+
+    element.style {
+    }
+
+    .body-content {
+        padding-left: 15px;
+        padding-right: 15px;
+        margin-top: 25px;
+    }
+</style>
+
+<div class="card card-fluid">
+    <div class="card-body mb-1">
+        <div id="placeholder"></div>
+        @using (Ajax.BeginForm(new AjaxOptions { HttpMethod = "POST", InsertionMode = InsertionMode.Replace, UpdateTargetId = "placeholder", OnSuccess = "onSuccess", Url = "/DocumentDetails/Create" }))
+        {
+            <div class="row">
+                <div class="col-sm-3 col-md-3  col-lg-3">
+                    <div class="form-group">
+                        @Html.Label("Document Category *", htmlAttributes: new { @class = "control-label " })
+                        @Html.DropDownList("CategoryId", null, new { @class = "form-control", id = "CategoryId" })
+                        @Html.ValidationMessageFor(model => model.CategoryId, "", new { @class = "text-danger" })
+                    </div>
+                </div>
+                <div class="col-sm-3 col-md-3  col-lg-3">
+                    <div class="form-group">
+                        @Html.LabelFor(x => x.DocumentyIdentity, new { @class = "col-form-label", style = "display: none;" })
+                        @Html.TextBoxFor(x => x.DocumentyIdentity, new { @class = "form-control", id = "DocumentyIdentity", style = "display: none;" })
+
+                        @Html.LabelFor(model => model.DocumentReferenceName, htmlAttributes: new { @class = "control-label" })
+                        @Html.TextBoxFor(model => model.DocumentReferenceName, new { @class = "form-control", id = "DocumentReferenceName" })
+                        @Html.ValidationMessageFor(model => model.DocumentReferenceName, "", new { @class = "text-danger" })
+                    </div>
+                </div>
+                <div class="col-sm-3 col-md-3  col-lg-3">
+                    <div class="form-group">
+                        @Html.LabelFor(model => model.DocumentDate, htmlAttributes: new { @class = "control-label" })
+                        @Html.TextBoxFor(model => model.DocumentDate, new { @class = "form-control", type = "date", id = "DocumentDate" })
+                        @Html.ValidationMessageFor(model => model.DocumentDate, "", new { @class = "text-danger" })
+                    </div>
+                </div>
+                <div class="col-sm-3 col-md-3  col-lg-3">
+                    <div class="form-group">
+                        @Html.LabelFor(model => model.DocumentName, htmlAttributes: new { @class = "control-label" })
+
+                        @Html.TextBoxFor(model => model.DocumentName, new { @class = "form-control", id = "DocumentName" })
+                        @Html.ValidationMessageFor(model => model.DocumentName, "", new { @class = "text-danger" })
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-sm-3 col-md-3  col-lg-3">
+                    <div class="form-group">
+                        @Html.LabelFor(model => model.DocumentNameBangla, htmlAttributes: new { @class = "control-label" })
+
+                        @Html.TextBoxFor(model => model.DocumentNameBangla, new { @class = "form-control", id = "DocumentNameBangla" })
+                        @Html.ValidationMessageFor(model => model.DocumentNameBangla, "", new { @class = "text-danger" })
+                    </div>
+                </div>
+                <div class="col-sm-3 col-md-3  col-lg-3">
+                    <div class="form-group">
+                        @Html.LabelFor(model => model.Description, htmlAttributes: new { @class = "control-label" })
+
+                        @Html.TextBoxFor(model => model.Description, new { @class = "form-control", id = "Description" })
+                        @Html.ValidationMessageFor(model => model.Description, "", new { @class = "text-danger" })
+
+                    </div>
+                </div>
+                <div class="col-sm-2 col-md-2  col-lg-2" style="margin-top:41px;">
+                    <div class="form-group">
+                        <button id="btnsubmit" type="submit" class="btn btn-info  btn-sm rounded-0">Submit</button>
+                    </div>
+                </div>
+            </div>
+
+        }
+    </div>
+</div>
+
+<div class="container">
+    <table id="myTabledocument" class="table table-bordered">
+        <thead>
+            <tr>
+                <th>Document Category</th>
+                <th width="160px">Document Reference Name</th>
+                <th>Document Date</th>
+                <th>Document Name</th>
+                <th width="108px">Document Name Bangla</th>
+                <th>Description</th>
+                <th width="175px">Action</th>
+            </tr>
+        </thead>
+    </table>
+</div>
+
+@Scripts.Render("~/Scripts/DocumentDetails.js")
+
+@section scripts {
+    <script src="~/Scripts/DocumentDetails.js"></script>
+    <script src="~/Content/Scripts/jquery.min.js"></script>
+    <script src="~/Content/Scripts/jquery.validate.min.js"></script>
+    <script src="~/Content/Scripts/jquery.validate.unobtrusive.js"></script>
+    <script src="~/Content/Scripts/jquery.unobtrusive-ajax.js"></script>
+    <script src="https://code.jquery.com/jquery-1.9.1.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.0.0/jquery.min.js"></script>
+    <script src="//cdn.datatables.net/1.12.1/js/jquery.dataTables.min.js"></script>
+
+    <script>
+        function onSuccess(data) {
+            if (data.success) {
+                $.ajax({
+                    url: '/DocumentDetails/AllDocument',
+                    type: 'GET',
+                    success: function (data) {
+
+                        dtable.ajax.reload();
+                        Swal.fire(
+                            'Successfully Done!',
+                            'You clicked the button!',
+                            'success'
+                        )
+                        $("#btnsubmit").text("Create");
+                        $("#DocumentyIdentity").val('');
+                        $("#DocumentReferenceName").val('');
+                        $("#DocumentDate").val('');
+                        $("#DocumentName").val('');
+                        $("#DocumentNameBangla").val('');
+                        $("#Description").val('');
+
+                    }
+                });
+            }
+            else {
+                Swal.fire({
+                    title: 'Already have this Document',
+                    showClass: {
+                        popup: 'animate__animated animate__fadeInDown'
+                    },
+                    hideClass: {
+                        popup: 'animate__animated animate__fadeOutUp'
+                    }
+                })
+            }
+
+        }
+    </script>
+}

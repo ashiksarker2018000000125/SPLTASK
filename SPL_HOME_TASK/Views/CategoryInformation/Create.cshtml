@@ -1,0 +1,125 @@
+﻿﻿
+@model SPL_HOME_TASK.Models.DocumentCategoryInfo
+@{
+    ViewBag.Title = "Create";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<style>    
+    textarea.form-control {
+        height: 38px;
+        width: 350px;
+    }
+
+    a {
+        color: #759cd5;
+        text-decoration: none;
+        text-decoration-line: none;
+    }
+</style>
+
+<div class="card card-fluid">
+    <div class="card-body mb-1">
+        <div id="placeholder"></div>
+        @using (Ajax.BeginForm(new AjaxOptions { HttpMethod = "POST", InsertionMode = InsertionMode.Replace, UpdateTargetId = "placeholder", OnSuccess = "onSuccess", Url = "/CategoryInformation/Create" }))
+        {
+            <div class="row">
+                <div class="col-sm-3 col-md-3  col-lg-3">
+                    <div class="form-group">
+                        @Html.LabelFor(x => x.CategoryName, new { @class = "col-form-label" })
+                        @Html.TextBoxFor(x => x.CategoryName, new { @class = "form-control", id = "CategoryName" })
+                        @Html.ValidationMessageFor(x => x.CategoryName, "", new { @class = "text-danger" })
+
+                        @Html.LabelFor(x => x.CategoryId, new { @class = "col-form-label", style = "display: none;" })
+                        @Html.TextBoxFor(x => x.CategoryId, new { @class = "form-control", id = "CategoryId", style = "display: none;" })
+                    </div>
+                </div>
+                <div class="col-sm-3 col-md-3  col-lg-3">
+                    <div class="form-group">
+                        @Html.LabelFor(x => x.CategoryNameBangla, new { @class = "col-form-label" })
+
+                        @Html.TextBoxFor(x => x.CategoryNameBangla, new { @class = "form-control", id = "CategoryNameBangla" })
+                        @Html.ValidationMessageFor(x => x.CategoryNameBangla, "", new { @class = "text-danger" })
+                    </div>
+                </div>
+                <div class="col-sm-4 col-md-4  col-lg-4">
+                    <div class="form-group">
+                        @Html.LabelFor(x => x.Description, new { @class = "col-form-label" })
+
+                        @Html.TextAreaFor(x => x.Description, new { @class = "form-control", id = "Description" })
+                        @Html.ValidationMessageFor(x => x.Description, "", new { @class = "text-danger" })
+                    </div>
+                </div>
+                <div class="col-sm-2 col-md-2  col-lg-2" style="margin-top:41px;">
+                    <div class="form-group">
+                        <button id="btnsubmit" type="submit" class="btn btn-info  btn-sm rounded-0">Submit</button>
+                    </div>
+                </div>
+            </div>
+        }   
+    </div>
+</div>
+
+<div class="container" style="margin-top:20px">
+    <table id="myTable" class="table table-bordered">
+        <thead>
+            <tr>
+                <th>CategoryName</th>
+                <th>CategoryNameBangla</th>
+                <th class="text-center">Description</th>
+                <th class="text-center">Action</th>
+            </tr>
+        </thead>    
+    </table>
+</div>
+@Scripts.Render("~/Scripts/Category.js")
+
+
+@section scripts {
+    <script src="~/Scripts/Category.js"></script>
+    <script src="~/Content/Scripts/jquery.min.js"></script>
+    <script src="~/Content/Scripts/jquery.validate.min.js"></script>
+    <script src="~/Content/Scripts/jquery.validate.unobtrusive.js"></script>
+    <script src="~/Content/Scripts/jquery.unobtrusive-ajax.js"></script>
+    <script src="https://code.jquery.com/jquery-1.9.1.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.0.0/jquery.min.js"></script>
+    <script src="//cdn.datatables.net/1.12.1/js/jquery.dataTables.min.js"></script>
+
+    <script>
+        function onSuccess(data) {
+            if (data.success) {
+                $.ajax({
+                    url: '/CategoryInformation/AllCategory',
+                    type: 'GET',
+                    success: function (data) {
+                        
+                        dtable.ajax.reload();
+                        Swal.fire(
+                            'Successfully Done!',
+                            'You clicked the button!',
+                            'success'
+                        )
+                        $("#btnsubmit").text("Create");
+                        $("#CategoryId").val('');
+                        $("#CategoryName").val('');
+                        $("#CategoryNameBangla").val('');
+                        $("#Description").val('');
+
+                    }
+                });
+            }
+            else {
+                Swal.fire({
+                    title: 'Already have this Category',
+                    showClass: {
+                        popup: 'animate__animated animate__fadeInDown'
+                    },
+                    hideClass: {
+                        popup: 'animate__animated animate__fadeOutUp'
+                    }
+                })
+            }
+            
+        }        
+    </script>
+
+}
